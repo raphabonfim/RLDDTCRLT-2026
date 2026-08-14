@@ -25,12 +25,16 @@ PLAYER_WIDTH = TILE_SIZE
 PLAYER_START_POS_X = 2 * TILE_SIZE
 PLAYER_START_POS_Y = 2 * TILE_SIZE
 PLAYER_COLOR = WHITE
+PLAYER_SPRITE = pygame.image.load("./assets/player.png").convert_alpha()
+PLAYER_RECT = PLAYER_SPRITE.get_rect()
 
-def draw(player):
-    pygame.draw.rect(screen, PLAYER_COLOR, player)
 
 
 all_sprites = pygame.sprite.Group()
+
+def draw(player):
+    screen.blit(PLAYER_SPRITE, (player.x, player.y))
+
 
 
 running = True
