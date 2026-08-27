@@ -78,6 +78,20 @@ def is_walkable(x, y, floor_map):
         return False
     return floor_map[x][y].walkable
 
+def carve_room(floor_map, x1, y1, x2, y2): # the +1 makes the room inclusive that means that we INCLUDE the coordinate in the room
+    for x in range(x1, x2 + 1):
+        for y in range(y1, y2 + 1):
+            floor_map[x][y] = Tile(DARK_GRAY, True)
+
+def carve_h_corridor(floor_map, x1, x2, y):
+    for x in range((min(x1, x2 + 1)), max(x1, x2 + 1)):
+        floor_map[x][y] = Tile(DARK_GRAY, True)
+
+def carve_v_corridor(floor_map, y1, y2, x):
+    for y in range((min(y1, y2 + 1)), max(y1, y2 + 1)):
+        floor_map[x][y] = Tile(DARK_GRAY, True)
+ 
+
 player = Entity(2, 2, 10, PLAYER_SPRITE)
 monster = Entity(5, 5, 5, MONSTER_SPRITE)
 monster2 = Entity(10, 7, 5, MONSTER_SPRITE)
@@ -85,14 +99,19 @@ monster2 = Entity(10, 7, 5, MONSTER_SPRITE)
 
 entities = [player, monster, monster2]
 
-floor_map = [[Tile(DARK_GRAY, True) for y in range(MAP_HEIGHT)] for x in range(MAP_WIDTH)]
+floor_map = [[Tile(LIGHT_GRAY, False) for y in range(MAP_HEIGHT)] for x in range(MAP_WIDTH)]
 
-for y in range(MAP_HEIGHT):
-    floor_map[0][y] = Tile(LIGHT_GRAY, False)
-    floor_map[MAP_WIDTH - 1][y] = Tile(LIGHT_GRAY, False)
-for x in range(MAP_WIDTH):
-    floor_map[x][0] = Tile(LIGHT_GRAY, False)
-    floor_map[x][MAP_HEIGHT - 1] = Tile(LIGHT_GRAY, False)
+carve_room(floor_map, 2, 2, 5, 5)
+carve_room(floor_map, 7, 2, 15, 12)
+carve_h_corridor(floor_map, 5, 7, 4)
+
+
+#for y in range(MAP_HEIGHT):
+#    floor_map[0][y] = Tile(LIGHT_GRAY, False)
+#    floor_map[MAP_WIDTH - 1][y] = Tile(LIGHT_GRAY, False)
+#for x in range(MAP_WIDTH):
+#    floor_map[x][0] = Tile(LIGHT_GRAY, False)
+#    floor_map[x][MAP_HEIGHT - 1] = Tile(LIGHT_GRAY, False)
 
 
 running = True
