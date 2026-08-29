@@ -1,23 +1,8 @@
-# 2026-08-22  
-# to do next: the dungeon
-# [x] floor tiles
-# [x] walls
-# [ ] rooms
-# [ ] field of view
-# next: 
-# [x] border tiles as walls
-# [x] walkable check
-# 2026-08-23
-# [ ] diagonal stuck fallback for monsters (pre-pathfinding)
-# [ ] room generation
-# [ ] create all walls
-# [ ] carve rooms
-# [ ] connect the rooms with corridors
-# [ ] place the player in the first room
-
 import pygame
 import sys
 import random
+
+from constants import *
 
 # === Constants and other variables === #
 TILE_SIZE = 16

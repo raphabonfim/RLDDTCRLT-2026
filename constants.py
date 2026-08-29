@@ -1,0 +1,16 @@
+# === Constants and other variables === #
+TILE_SIZE = 16
+MAP_HEIGHT = 18
+MAP_WIDTH = 32
+HEIGHT = MAP_HEIGHT * TILE_SIZE
+WIDTH = MAP_WIDTH * TILE_SIZE
+FPS = 60
+
+# === COLORS === #
+WHITE = (255, 255, 255)
+DARK_GRAY = (85, 85, 85)
+LIGHT_GRAY = (190, 190, 190)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0) 
+BLUE = (0, 0, 255)
