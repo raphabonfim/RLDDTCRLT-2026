@@ -3,6 +3,7 @@ import sys
 import random
 
 from constants import *
+from entities import Entity, get_blocking_entity
 
 # === Standard Game Loop Structure in 5 steps: === #
 
@@ -13,15 +14,6 @@ pygame.display.set_caption("r/roguelikedev does the tutorial 2026")
 clock = pygame.time.Clock()
 
 # === CLASSES === #
-class Entity:
-    def __init__(self, x, y, hp, sprite):
-        self.x = x
-        self.y = y
-        self.hp = hp
-        self.sprite = sprite
-    
-    def draw(self, screen):
-        screen.blit(self.sprite, (self.x * TILE_SIZE, self.y * TILE_SIZE))
 
 class Tile:
     def __init__(self, color, walkable):
@@ -51,12 +43,6 @@ PLAYER_SPRITE = pygame.image.load("./assets/player.png").convert_alpha()
 MONSTER_SPRITE = pygame.image.load("./assets/monster.png").convert_alpha()
 
 # === HELPER FUNCTIONS === #
-
-def get_blocking_entity(x, y, entities):
-    for entity in entities:
-        if entity.x == x and entity.y == y:
-            return entity
-    return None
 
 def is_walkable(x, y, floor_map):
     if x < 0 or x >= MAP_WIDTH:
