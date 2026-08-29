@@ -12,7 +12,7 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("r/roguelikedev does the tutorial 2026")
 clock = pygame.time.Clock()
-font = pygame.font.Font('Mono', 20) # None = Default font
+font = pygame.font.Font(None, 20) # None = Default font
 
 
 PLAYER_SPRITE = pygame.image.load("./assets/player.png").convert_alpha()
