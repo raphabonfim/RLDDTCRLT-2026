@@ -1,6 +1,5 @@
 import pygame
 import sys
-import random
 
 from constants import *
 from entities import Entity, get_blocking_entity
@@ -13,12 +12,15 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("r/roguelikedev does the tutorial 2026")
 clock = pygame.time.Clock()
+font = pygame.font.Font(None, 20) # None = Default font
 
 
 PLAYER_SPRITE = pygame.image.load("./assets/player.png").convert_alpha()
 MONSTER_SPRITE = pygame.image.load("./assets/monster.png").convert_alpha()
 
 floor_map, rooms = generate_dungeon(50, 4, 6)
+
+messages = []
 
 # add entities
 
@@ -76,7 +78,7 @@ while running:
                     blocked_by = get_blocking_entity(dest_x, dest_y, entities)
                     if blocked_by:
                         blocked_by.hp -= 1
-                        print(f"You kick the monster. {blocked_by.hp} HP left.")
+                        messages.append(f"You kick the monster. It makes a funny face.")
                         if blocked_by.hp <= 0:
                             entities.remove(blocked_by) 
                     else:
@@ -108,9 +110,9 @@ while running:
 
                 if get_blocking_entity(dest_x, dest_y, entities) is player:
                     player.hp -= 1
-                    print(f"The monster bites you! {player.hp} HP left!")
+                    messages.append(f"The monster bites you! Ouch!")
                     if player.hp <= 0:
-                        print("game over!")
+                        messages.append("Game over!")
                         running = False
                     break
 
@@ -118,6 +120,7 @@ while running:
                     entity.x += cdx
                     entity.y += cdy
                     break
+        del messages[:-50] # deleting older messages from index 0 up to the 50th item from the end
 
     # 3. Clear/Fill BG so the sprites won't leave trails
     screen.fill(BLACK)
@@ -131,8 +134,15 @@ while running:
     
     for entity in entities:
         entity.draw(screen)
-
     
+    text_surf = font.render(f"HP: {player.hp}", True, WHITE) # True turns on antialiasing
+    screen.blit(text_surf, (1 * TILE_SIZE, MAP_HEIGHT * TILE_SIZE))
+
+    for index, message in enumerate(messages[-3:]):
+        message_surf = font.render(message, True, WHITE)
+        screen.blit(message_surf, (1 * TILE_SIZE, MAP_HEIGHT * TILE_SIZE + TEXT_HEIGHT + index * TEXT_HEIGHT))
+
+
     # 5. Update the display so the player can see the new frame
     pygame.display.flip()
 
