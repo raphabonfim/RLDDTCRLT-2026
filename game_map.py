@@ -6,6 +6,7 @@ class Tile:
         self.color = color
         self.color_dim = color_dim
         self.walkable = walkable
+        self.transparent = transparent
         self.visible = False
         self.explored = False
 
@@ -90,3 +91,66 @@ def generate_dungeon(max_rooms,room_min_size, room_max_size):
             rooms.append(r)
         
     return floor_map, rooms
+
+
+def compute_fov(floor_map, player_x, player_y, radius):
+    for x in range(MAP_WIDTH):
+        for y in range(MAP_HEIGHT):
+            floor_map[x][y].visible = False
+
+    for x in range(max(0, player_x - radius), min(MAP_WIDTH, player_x + radius + 1)): # min and max 'clamp' out of index values; the +1 in the width makes the radius symmetrical
+        for y in range(max(0, player_y - radius), min(MAP_HEIGHT, player_y + radius+ 1)):
+            for line_x, line_y in bresenham_line_algo(player_x, player_y, x, y):
+                tile = floor_map[line_x][line_y]
+                tile.visible = True
+                tile.explored = True
+                if not tile.transparent:
+                    break
+
+def bresenham_line_algo(start_x, start_y, end_x, end_y):
+    """
+    Get a list of tiles for drawing a straight line 
+    using Bresenham's line algorithm
+    """
+
+    tiles = []
+    # calc the distance between the relative points
+    dx = abs(start_x - end_x)
+    dy = abs(start_y - end_y)
+
+    # calc the step direction between the relative points
+    sx = 1 if start_x < end_x else -1
+    sy = 1 if start_y < end_y else -1
+
+    """
+    Error driver parameter: decides if the map tile 
+    should be part of the line based on its distance
+    from the true mathematical line
+    """
+    err = dx - dy
+
+    while True:
+        tiles.append((start_x, start_y))
+
+        # break loop once the "destination" tile is reached
+        if start_x == end_x and start_y == end_y:
+            break
+
+        e2 = 2 * err
+
+        # walk along x axis
+        if e2 > - dy:
+            err -= dy
+            start_x += sx
+
+        # walk along y axis
+        if e2 < dx:
+            err += dx
+            start_y += sy
+
+    return tiles
+
+
+		
+
+

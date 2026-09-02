@@ -3,7 +3,7 @@ import sys
 
 from constants import *
 from entities import Entity, get_blocking_entity
-from game_map import Tile, Room, is_walkable, carve_room, carve_h_corridor, carve_v_corridor, generate_dungeon
+from game_map import Tile, Room, is_walkable, carve_room, carve_h_corridor, carve_v_corridor, generate_dungeon, compute_fov, bresenham_line_algo
 
 # === Standard Game Loop Structure in 5 steps: === #
 
@@ -20,13 +20,6 @@ MONSTER_SPRITE = pygame.image.load("./assets/monster.png").convert_alpha()
 
 floor_map, rooms = generate_dungeon(50, 4, 6)
 
-#TEMPORARY: JUST FOR TESTING FOV
-
-for x in range(MAP_WIDTH):
-    for y in range(MAP_HEIGHT):
-        floor_map[x][y].visible = False
-        floor_map[x][y].explored = True
-
 messages = []
 
 # add entities
@@ -39,6 +32,8 @@ entities = [player]
 for room in rooms[1:]:
     x, y = room.center()
     entities.append(Entity(x, y, 2, MONSTER_SPRITE))
+
+compute_fov(floor_map, player.x, player.y, 8)
 
 
 # === GAME LOOP === #
@@ -96,6 +91,7 @@ while running:
                     turn_counter += 1
 
     if turn_taken: 
+        compute_fov(floor_map, player.x, player.y, 8)
         for entity in list(entities):
             if entity is player:
                 continue
@@ -146,7 +142,8 @@ while running:
 
     
     for entity in entities:
-        entity.draw(screen)
+        if floor_map[entity.x][entity.y].visible:
+            entity.draw(screen)
     
     text_surf = font.render(f"HP: {player.hp}", True, WHITE) # True turns on antialiasing
     screen.blit(text_surf, (1 * TILE_SIZE, MAP_HEIGHT * TILE_SIZE))
