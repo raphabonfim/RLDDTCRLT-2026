@@ -2,9 +2,12 @@ import random
 from constants import *
 
 class Tile:
-    def __init__(self, color, walkable):
+    def __init__(self, color, color_dim, walkable, transparent):
         self.color = color
+        self.color_dim = color_dim
         self.walkable = walkable
+        self.visible = False
+        self.explored = False
 
 class Room:
     def __init__(self, x1, y1, x2, y2):
@@ -38,18 +41,21 @@ def is_walkable(x, y, floor_map):
 def carve_room(floor_map, x1, y1, x2, y2): # the +1 makes the room inclusive that means that we INCLUDE the coordinate in the room
     for x in range(x1, x2 + 1):
         for y in range(y1, y2 + 1):
-            floor_map[x][y] = Tile(DARK_GRAY, True)
+            floor_map[x][y] = Tile(DARK_GRAY, DARK_GRAY_DIM, True, True) # transform stone into floor tiles
 
 def carve_h_corridor(floor_map, x1, x2, y):
     for x in range(min(x1, x2), max(x1, x2) + 1):
-        floor_map[x][y] = Tile(DARK_GRAY, True)
+        floor_map[x][y] = Tile(DARK_GRAY, DARK_GRAY_DIM, True, True) # transform stone into floor tiles
+ 
 
 def carve_v_corridor(floor_map, y1, y2, x):
     for y in range(min(y1, y2), max(y1, y2) + 1):
-        floor_map[x][y] = Tile(DARK_GRAY, True)
+        floor_map[x][y] = Tile(DARK_GRAY, DARK_GRAY_DIM, True, True) # transform stone into floor tiles
+
  
 def generate_dungeon(max_rooms,room_min_size, room_max_size):
-    floor_map = [[Tile(LIGHT_GRAY, False) for y in range(MAP_HEIGHT)] for x in range(MAP_WIDTH)]
+    # this fills the map with stone walls
+    floor_map = [[Tile(LIGHT_GRAY, LIGHT_GRAY_DIM, False, False) for y in range(MAP_HEIGHT)] for x in range(MAP_WIDTH)]
 
     rooms = []
 

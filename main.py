@@ -20,6 +20,13 @@ MONSTER_SPRITE = pygame.image.load("./assets/monster.png").convert_alpha()
 
 floor_map, rooms = generate_dungeon(50, 4, 6)
 
+#TEMPORARY: JUST FOR TESTING FOV
+
+for x in range(MAP_WIDTH):
+    for y in range(MAP_HEIGHT):
+        floor_map[x][y].visible = False
+        floor_map[x][y].explored = True
+
 messages = []
 
 # add entities
@@ -129,7 +136,13 @@ while running:
     for x in range(MAP_WIDTH):
         for y in range(MAP_HEIGHT):
             tile = floor_map[x][y]
-            pygame.draw.rect(screen, tile.color, (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+            if tile.visible:
+                color = tile.color
+            elif tile.explored:
+                color = tile.color_dim
+            else:
+                continue
+            pygame.draw.rect(screen, color, (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE))
 
     
     for entity in entities:

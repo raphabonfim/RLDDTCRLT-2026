@@ -10,7 +10,9 @@ FPS = 60
 # === COLORS === #
 WHITE = (255, 255, 255)
 DARK_GRAY = (85, 85, 85)
+DARK_GRAY_DIM = (15, 15, 15)
 LIGHT_GRAY = (190, 190, 190)
+LIGHT_GRAY_DIM = (40, 40, 40)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0) 
