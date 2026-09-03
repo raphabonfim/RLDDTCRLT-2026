@@ -39,10 +39,12 @@ def is_walkable(x, y, floor_map):
         return False
     return floor_map[x][y].walkable
 
+
 def carve_room(floor_map, x1, y1, x2, y2): # the +1 makes the room inclusive that means that we INCLUDE the coordinate in the room
     for x in range(x1, x2 + 1):
         for y in range(y1, y2 + 1):
             floor_map[x][y] = Tile(DARK_GRAY, DARK_GRAY_DIM, True, True) # transform stone into floor tiles
+
 
 def carve_h_corridor(floor_map, x1, x2, y):
     for x in range(min(x1, x2), max(x1, x2) + 1):
@@ -62,11 +64,11 @@ def generate_dungeon(max_rooms,room_min_size, room_max_size):
 
     for _ in range(max_rooms):
         room_valid = True
-
-        # quick maths to ensure rooms are inside boundaries
-        # defining room_w and room_h helps keep things under control
-        # they go inside the loop because I want diff numbers every iteration
-
+        """
+        quick maths to ensure rooms are inside boundaries
+        defining room_w and room_h helps keep things under control
+        they go inside the loop because I want diff numbers every iteration
+        """
         room_width = random.randint(room_min_size, room_max_size)
         room_height = random.randint(room_min_size, room_max_size)
         x1 = random.randint(1, MAP_WIDTH - room_width - 1)
@@ -151,6 +153,16 @@ def bresenham_line_algo(start_x, start_y, end_x, end_y):
     return tiles
 
 
-		
-
+def has_line_of_sight(floor_map, x1, y1, x2, y2):
+    """
+    This is just another implementation FOV computation.
+    Instead of returning properties of tiles, we ask 
+    if the source has LoS to the target - True or False
+    x1, y1 is the source, x2, y2 is the target
+    """
+    for line_x, line_y in bresenham_line_algo(x1, y1, x2, y2):
+        tile = floor_map[line_x][line_y]
+        if not tile.transparent:
+            return False
+    return True
 

@@ -3,7 +3,7 @@ import sys
 
 from constants import *
 from entities import Entity, get_blocking_entity
-from game_map import Tile, Room, is_walkable, carve_room, carve_h_corridor, carve_v_corridor, generate_dungeon, compute_fov, bresenham_line_algo
+from game_map import Tile, Room, is_walkable, carve_room, carve_h_corridor, carve_v_corridor, generate_dungeon, compute_fov, bresenham_line_algo, has_line_of_sight
 
 # === Standard Game Loop Structure in 5 steps: === #
 
@@ -13,7 +13,6 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("r/roguelikedev does the tutorial 2026")
 clock = pygame.time.Clock()
 font = pygame.font.Font(None, 20) # None = Default font
-
 
 PLAYER_SPRITE = pygame.image.load("./assets/player.png").convert_alpha()
 MONSTER_SPRITE = pygame.image.load("./assets/monster.png").convert_alpha()
@@ -52,17 +51,10 @@ while running:
                 
         if event.type == pygame.KEYDOWN:
 
-            if event.key == pygame.K_d: # for debug
-                print(f'player.y={player.y}, player.x={player.x}')
-                print(f'monster.y={monster.y}, monster.x={monster.x}')
-                print(f'monster2.y={monster2.y}, monster2.x={monster2.x}')
-                print(f'turn: {turn_counter}')
-                print(f'entities: {entities}')
-
-            elif event.key == pygame.K_SPACE: # wait
+            if event.key == pygame.K_SPACE: # wait
                 direction = (0, 0)
 
-            elif event.key in (pygame.K_UP, pygame.K_k):
+            elif event.key in (pygame.K_UP, pygame.K_k): # movement block
                 direction = (0, -1)
             elif event.key in (pygame.K_DOWN, pygame.K_j):
                 direction = (0, 1)
@@ -95,14 +87,16 @@ while running:
         for entity in list(entities):
             if entity is player:
                 continue
-        
-            # an arithmetric trick to chase.
-            # when player moves, we compare their relative position 
-            # as True or False to understand the need to move
-            # if the comparison != 0, then the monster needs to move 1 step
-            # the direction is given by 
-            # the sign of the difference between the 2 comparisons
-
+            if not has_line_of_sight(floor_map, entity.x, entity.y, player.x, player.y):
+                continue
+            """ 
+            an arithmetric trick to chase.
+            when player moves, we compare their relative position 
+            as True or False to understand the need to move
+            if the comparison != 0, then the monster needs to move 1 step
+            the direction is given by 
+            the sign of the difference between the 2 comparisons
+            """
             dx = (player.x > entity.x) - (player.x < entity.x)
             dy = (player.y > entity.y) - (player.y < entity.y)
 
