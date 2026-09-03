@@ -17,24 +17,26 @@ font = pygame.font.Font(None, 20) # None = Default font
 PLAYER_SPRITE = pygame.image.load("./assets/player.png").convert_alpha()
 MONSTER_SPRITE = pygame.image.load("./assets/monster.png").convert_alpha()
 
-floor_map, rooms = generate_dungeon(50, 4, 6)
+# --- functions ---# 
+def generate_new_level(player, entities):
+    floor_map, rooms = generate_dungeon(50, 4, 6)
+    player.x, player.y = rooms[0].center()
+    entities[:] = [player]
+    for room in rooms[1:]:
+        x, y = room.center()
+        entities.append(Entity(x, y, 2, MONSTER_SPRITE))
+    compute_fov(floor_map, player.x, player.y, 8)
+    return floor_map, rooms
 
+
+
+# Game Setup 
+player = Entity(0, 0, 10, PLAYER_SPRITE)
+entities = []
 messages = []
-
-# add entities
-
-first_room_center_x, first_room_center_y = rooms[0].center()
-
-player = Entity(first_room_center_x, first_room_center_y, 10, PLAYER_SPRITE)
-entities = [player]
-
-for room in rooms[1:]:
-    x, y = room.center()
-    entities.append(Entity(x, y, 2, MONSTER_SPRITE))
-
-compute_fov(floor_map, player.x, player.y, 8)
-
 depth = 1
+floor_map, rooms = generate_new_level(player, entities)
+
 
 # === GAME LOOP === #
 
@@ -61,14 +63,8 @@ while running:
                     if floor_map[player.x][player.y].stairs:
                         turn_taken = True
                         depth += 1
-                        messages.append(f"You descent. You are in depth {depth}.")
-                        floor_map, rooms = generate_dungeon(50, 4, 6)
-                        player.x, player.y = rooms[0].center()
-                        entities[:] = [player]
-                        for room in rooms[1:]:
-                            x, y = room.center()
-                            entities.append(Entity(x, y, 2, MONSTER_SPRITE))
-                        compute_fov(floor_map, player.x, player.y, 8)
+                        messages.append(f"You descend. You are in depth {depth}")
+                        floor_map, rooms = generate_new_level(player, entities)
                     else: 
                         messages.append("You cannot descend without standing on stairs.")
 
