@@ -34,6 +34,7 @@ for room in rooms[1:]:
 
 compute_fov(floor_map, player.x, player.y, 8)
 
+depth = 1
 
 # === GAME LOOP === #
 
@@ -53,6 +54,23 @@ while running:
 
             if event.key == pygame.K_SPACE: # wait
                 direction = (0, 0)
+
+            elif event.key == pygame.K_PERIOD:
+                # check if shift is held down while pressing period
+                if event.mod & pygame.KMOD_SHIFT:
+                    if floor_map[player.x][player.y].stairs:
+                        turn_taken = True
+                        depth += 1
+                        messages.append(f"You descent. You are in depth {depth}.")
+                        floor_map, rooms = generate_dungeon(50, 4, 6)
+                        player.x, player.y = rooms[0].center()
+                        entities[:] = [player]
+                        for room in rooms[1:]:
+                            x, y = room.center()
+                            entities.append(Entity(x, y, 2, MONSTER_SPRITE))
+                        compute_fov(floor_map, player.x, player.y, 8)
+                    else: 
+                        messages.append("You cannot descend without standing on stairs.")
 
             elif event.key in (pygame.K_UP, pygame.K_k): # movement block
                 direction = (0, -1)
@@ -139,7 +157,7 @@ while running:
         if floor_map[entity.x][entity.y].visible:
             entity.draw(screen)
     
-    text_surf = font.render(f"HP: {player.hp}", True, WHITE) # True turns on antialiasing
+    text_surf = font.render(f"HP: {player.hp} | Depth {depth}", True, WHITE) # True turns on antialiasing
     screen.blit(text_surf, (1 * TILE_SIZE, MAP_HEIGHT * TILE_SIZE))
 
     for index, message in enumerate(messages[-3:]):

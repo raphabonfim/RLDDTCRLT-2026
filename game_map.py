@@ -2,13 +2,14 @@ import random
 from constants import *
 
 class Tile:
-    def __init__(self, color, color_dim, walkable, transparent):
+    def __init__(self, color, color_dim, walkable, transparent, stairs=False):
         self.color = color
         self.color_dim = color_dim
         self.walkable = walkable
         self.transparent = transparent
         self.visible = False
         self.explored = False
+        self.stairs = stairs
 
 class Room:
     def __init__(self, x1, y1, x2, y2):
@@ -91,8 +92,13 @@ def generate_dungeon(max_rooms,room_min_size, room_max_size):
                 carve_h_corridor(floor_map, new_room_center_x, old_room_center_x, old_room_center_y)
                 carve_v_corridor(floor_map, new_room_center_y, old_room_center_y, new_room_center_x)
             rooms.append(r)
+
+    # adding stairs to the last room
+    last_room = rooms[-1]
+    x, y = last_room.center()
+    floor_map[x][y] = Tile(YELLOW, YELLOW_DIM, True, True, True)
         
-    return floor_map, rooms
+    return floor_map, rooms 
 
 
 def compute_fov(floor_map, player_x, player_y, radius):
